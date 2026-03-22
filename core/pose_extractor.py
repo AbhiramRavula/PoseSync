@@ -32,8 +32,8 @@ class PoseExtractor:
     def __init__(
         self,
         model_complexity: int = 1,
-        min_detection_confidence: float = 0.5,
-        min_tracking_confidence: float = 0.5,
+        min_detection_confidence: float = 0.6,
+        min_tracking_confidence: float = 0.6,
     ) -> None:
         self._mp_pose = mp.solutions.pose
         self._mp_draw = mp.solutions.drawing_utils
@@ -43,6 +43,9 @@ class PoseExtractor:
             min_tracking_confidence=min_tracking_confidence,
             smooth_landmarks=True,
         )
+        # Core body landmark indices that must be visible for a valid detection
+        # (left/right shoulders = 11,12 ; left/right hips = 23,24)
+        self._CORE_IDX = [11, 12, 23, 24, 13, 14, 25, 26]
 
     # ------------------------------------------------------------------
     # Extraction
@@ -71,14 +74,21 @@ class PoseExtractor:
         for lm in results.pose_landmarks.landmark:
             landmarks.append(
                 {
-                    "x": lm.x,  # normalised [0, 1]
+                    "x": lm.x,
                     "y": lm.y,
                     "z": lm.z,
                     "visibility": lm.visibility,
-                    "px": int(lm.x * w),  # pixel coords
+                    "px": int(lm.x * w),
                     "py": int(lm.y * h),
                 }
             )
+
+        # Require at least half of core body landmarks to be clearly visible.
+        # This prevents background noise / reflections being tracked as a person.
+        core_vis = [landmarks[i]["visibility"] for i in self._CORE_IDX]
+        if sum(v > 0.55 for v in core_vis) < 4:
+            return None
+
         return {"landmarks": landmarks, "world_landmarks": results.pose_world_landmarks}
 
     # ------------------------------------------------------------------
@@ -103,18 +113,12 @@ class PoseExtractor:
         for conn in self.POSE_CONNECTIONS:
             a_idx, b_idx = conn
             a, b = landmarks[a_idx], landmarks[b_idx]
-            if a["visibility"] > 0.3 and b["visibility"] > 0.3:
-                cv2.line(
-                    out,
-                    (a["px"], a["py"]),
-                    (b["px"], b["py"]),
-                    color,
-                    thickness,
-                    cv2.LINE_AA,
-                )
+            if a["visibility"] > 0.5 and b["visibility"] > 0.5:
+                cv2.line(out, (a["px"], a["py"]), (b["px"], b["py"]),
+                         color, thickness, cv2.LINE_AA)
 
         for lm in landmarks:
-            if lm["visibility"] > 0.3:
+            if lm["visibility"] > 0.5:
                 cv2.circle(out, (lm["px"], lm["py"]), dot_radius, color, -1, cv2.LINE_AA)
 
         return out

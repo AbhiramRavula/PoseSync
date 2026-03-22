@@ -204,31 +204,19 @@ def run() -> None:
     grade, grade_colour = get_grade(avg_score)
 
     # ── Header ──────────────────────────────────────────────────────────────
-    st.markdown("<h1 style='margin-bottom:4px;'>📊 Session Analytics</h1>", unsafe_allow_html=True)
+    st.html("<h1 style='margin-bottom:4px;'>📊 Session Analytics</h1>")
 
     # ── Hero score ───────────────────────────────────────────────────────────
-    st.markdown(_hero_html(avg_score, grade, grade_colour, ex_name), unsafe_allow_html=True)
+    st.html(_hero_html(avg_score, grade, grade_colour, ex_name))
 
     # ── Stat cards ───────────────────────────────────────────────────────────
     c1, c2, c3, c4 = st.columns(4, gap="medium")
-    c1.markdown(
-        _stat_card_html("⏱", "Duration", f"{duration_s}s", "#94a3b8"),
-        unsafe_allow_html=True,
-    )
-    c2.markdown(
-        _stat_card_html("🏆", "Best moment", f"{best_score:.0f}%", "#10b981"),
-        unsafe_allow_html=True,
-    )
-    c3.markdown(
-        _stat_card_html("📉", "Worst moment", f"{worst_score:.0f}%", score_to_colour(worst_score)),
-        unsafe_allow_html=True,
-    )
-    c4.markdown(
-        _stat_card_html("🖼", "Frames", f"{len(frames)}", "#94a3b8"),
-        unsafe_allow_html=True,
-    )
+    c1.html(_stat_card_html("⏱", "Duration", f"{duration_s}s", "#94a3b8"))
+    c2.html(_stat_card_html("🏆", "Best moment", f"{best_score:.0f}%", "#10b981"))
+    c3.html(_stat_card_html("📉", "Worst moment", f"{worst_score:.0f}%", score_to_colour(worst_score)))
+    c4.html(_stat_card_html("🖼", "Frames", f"{len(frames)}", "#94a3b8"))
 
-    st.markdown("<div style='height:16px;'></div>", unsafe_allow_html=True)
+    st.html("<div style='height:16px;'></div>")
 
     # ── Timeline chart ───────────────────────────────────────────────────────
     st.markdown("### 📈 Accuracy Over Time")
@@ -243,10 +231,9 @@ def run() -> None:
         strongest = max(avg_joints, key=avg_joints.get)
         col_a, col_b = st.columns([3, 1])
         with col_a:
-            st.markdown(_joint_breakdown_html(avg_joints), unsafe_allow_html=True)
+            st.html(_joint_breakdown_html(avg_joints))
         with col_b:
-            st.markdown(
-                f"""
+            st.html(f"""
                 <div style="background:#1a1a2e;border:1px solid #2d2d4e;
                             border-radius:12px;padding:16px;margin-top:4px;">
                   <div style="font-size:0.75rem;color:#64748b;margin-bottom:8px;">HIGHLIGHTS</div>
@@ -261,9 +248,7 @@ def run() -> None:
                     <div style="font-size:0.8rem;color:#ef4444;">{avg_joints[weakest]:.0f}%</div>
                   </div>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            """)
 
     # ── Form tips based on weak joints ──────────────────────────────────────
     if avg_joints:
