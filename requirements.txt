@@ -1,0 +1,10 @@
+# PoseSync dependencies
+# All packages below should already be installed in your environment.
+# Run: pip install -r requirements.txt  (to install any missing ones)
+
+mediapipe>=0.10.0
+opencv-python>=4.8.0
+streamlit>=1.33.0
+plotly>=5.0.0
+numpy>=1.24.0
+yt-dlp>=2023.1.0
