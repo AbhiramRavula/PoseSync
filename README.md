@@ -1,7 +1,6 @@
 # PoseSync 🧘 — AI Pose Coach
 A production-ready **yoga & exercise pose accuracy tracker** built with MediaPipe, OpenCV, and Streamlit.
 
-
 ## Features
 
 - 📚 **Exercise Library** — 12 curated exercises (Yoga, Exercise, Stretch) with YouTube tutorial videos
